@@ -18,6 +18,10 @@ dependencies = [
 dev = [
     "poethepoet>=0.37.0",
     "pyright>=1.1.405",
+    "pytest>=8.4.2",
+    "pytest-asyncio>=0.24.0",
+    "pytest-cov>=7.0.0",
+    "pytest-timeout>=2.3.1",
     "ruff>=0.13.2",
 ]
 
@@ -43,6 +47,11 @@ shell = "ruff format . && ruff check --fix . "
 [tool.poe.tasks.lint]
 help = "Fix all files format in the current directory"
 shell = "ruff format --check . && ruff check --diff . && pyright"
+
+[tool.poe.tasks.test]
+help = "Run tests"
+env.ENV = "test"
+cmd = "pytest -s -vv --durations=10 --cov=. tests/"
 
 [tool.ruff]
 # Exclude a variety of commonly ignored directories.
@@ -122,3 +131,21 @@ docstring-code-format = true
 # This only has an effect when the `docstring-code-format` setting is
 # enabled.
 docstring-code-line-length = 60
+
+
+[tool.pytest.ini_options]
+asyncio_default_fixture_loop_scope = "function"
+asyncio_mode="auto"
+addopts = [
+    "--import-mode=importlib",
+    "--durations=10",
+    "--tb=short",
+]
+filterwarnings = [
+    "ignore:The event_loop fixture provided by pytest-asyncio has been redefined.*:DeprecationWarning",
+    # Pydantic v2 → v3 非推奨警告（発生源モジュールで限定）
+    "ignore::pydantic.PydanticDeprecatedSince20:pydantic\\._internal\\._config",
+]
+pythonpath = "src"
+testpaths = ["tests"]
+timeout = 180

@@ -26,8 +26,8 @@
 1. `uv sync` を実行し、追加した `numpy` 依存をインストール。
 2. 以下のように呼び出してデータを生成：
    ```python
-   from domain.dataset.linear_separable import LinearSeparableDatasetConfig
-   from infra.dataset.read import LinearSeparableDatasetReader
+   from domain.dataset.linear_separable.contract import LinearSeparableDatasetConfig
+   from infra.dataset.linear_separable.read import LinearSeparableDatasetReader
 
    config = LinearSeparableDatasetConfig(seed=42, noise_std=0.1)
    dataset = LinearSeparableDatasetReader(config).read()
