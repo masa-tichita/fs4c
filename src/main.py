@@ -1,5 +1,9 @@
 from pydantic import BaseModel
+from utils.logging import setup_logger, log_fn
 
+setup_logger()
+
+@log_fn
 class User(BaseModel):
     id: int
     name: str
