@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import sys
-from collections.abc import Sequence
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -18,60 +17,17 @@ from domain.model.ls_svm.contract import LSSVMHyperParameters
 from infra.dataset.linear_separable.read import LinearSeparableDatasetReader
 from utils.logging import log_fn, setup_logger
 
-DEFAULT_OUTPUT = Path("artifacts/ls_svm_visualization.png")
+DATASET_CONFIG = LinearSeparableDatasetConfig(
+    size=100,
+    features=25,
+    snr=1.0,
+    seed=42,
+    train_ratio=0.7,
+)
 
+HYPER_PARAMETERS = LSSVMHyperParameters(gamma=10.0, kernel="linear")
 
-def parse_cli_args(
-    argv: Sequence[str],
-) -> tuple[
-    LinearSeparableDatasetConfig,
-    LSSVMHyperParameters,
-    Path,
-]:
-    params: dict[str, str] = {}
-    if argv:
-        if len(argv) % 2 != 0:
-            msg = "Arguments must be provided as --key value pairs."
-            raise ValueError(msg)
-        for flag, value in zip(argv[::2], argv[1::2]):
-            if not flag.startswith("--"):
-                msg = f"Invalid flag format: {flag}"
-                raise ValueError(msg)
-            key = flag[2:].replace("-", "_")
-            params[key] = value
-
-    dataset_params: dict[str, str] = {}
-    hyper_params: dict[str, str] = {}
-    output = Path(params.get("output", DEFAULT_OUTPUT))
-
-    for key, value in params.items():
-        if key in {
-            "size",
-            "features",
-            "informative",
-            "correlation",
-            "noise_std",
-            "snr",
-            "seed",
-            "train_ratio",
-        }:
-            dataset_params[key] = value
-        elif key in {"gamma", "kernel", "rbf_sigma"}:
-            hyper_params[key] = value
-
-    if "features" not in dataset_params:
-        dataset_params["features"] = "2"
-
-    dataset_config = LinearSeparableDatasetConfig.model_validate(dataset_params)
-
-    if "kernel" not in hyper_params:
-        hyper_params["kernel"] = "linear"
-    if hyper_params.get("kernel") == "linear" and "gamma" not in hyper_params:
-        hyper_params["gamma"] = "10.0"
-
-    hyperparameters = LSSVMHyperParameters.model_validate(hyper_params)
-
-    return dataset_config, hyperparameters, output
+OUTPUT_PATH = Path("artifacts/ls_svm_visualization.png")
 
 
 def ensure_output_directory(path: Path) -> None:
@@ -139,8 +95,7 @@ def run_visualization(
 
 def main() -> None:
     setup_logger()
-    dataset_config, hyperparameters, output = parse_cli_args(sys.argv[1:])
-    run_visualization(dataset_config, hyperparameters, output)
+    run_visualization(DATASET_CONFIG, HYPER_PARAMETERS, OUTPUT_PATH)
 
 
 if __name__ == "__main__":

@@ -1,3 +1,9 @@
+### general
+*.pdf
+*.png
+*.jpg
+*.jpeg
+
 ### MacOS
 # General
 .DS_Store
