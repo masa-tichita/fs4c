@@ -17,6 +17,26 @@
 - **Infra**: 実データ取得・ファイル入出力・合成データ生成を担当。`domain` の契約を満たすよう実装する。
 - **Utils**: ロギング・パス解決などの横断関心事。新規ユーティリティ追加時は依存方向が崩れないかを確認。
 
+## モジュールの依存関係
+【重要】以下のような__init__.pyを作成して依存関係を解決することは禁止
+【重要】srcをroot dirに指定(Jetbrainsのeditorの機能)していることから、すべてのimportはsrc直下から
+スタート可能になっている。つまりapp/???/、やdomain/???といった形のimportで参照できる。
+```aiignore
+Added src/app/service/ls_svm/__init__.py (+10 -0)
+1     +"""LS-SVM サービスの公開モジュール。"""
+2     +
+3     +from .service import LSSVMHyperParameters, LSSVMModel, LSSVMService
+4     +
+5     +__all__ = [
+6     +    "LSSVMHyperParameters",
+7     +    "LSSVMModel",
+8     +    "LSSVMService",
+9     +]
+10    +
+```
+【重要】import gurobi等の外部ライブラリのimportに関してif文分岐は必要ない。
+理由 : importできない時点で 使用している箇所でエラーが出るから原因がわかるため。
+
 ## データセット運用
 - 線形分離可能な合成データ、two-spiral、Iris/MNIST など 2 クラスデータを優先的に整備する。
 - 合成データは `domain/dataset/<name>/contract.py` でスキーマや生成パラメータを定義し、`infra/dataset/read.py` から生成関数を提供する。

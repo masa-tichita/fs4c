@@ -14,7 +14,9 @@ class LinearSeparableDatasetConfig(BaseModel):
     informative: Optional[int] = Field(default=None, ge=1)
     correlation: float = Field(default=0.35, ge=0.0, lt=1.0)
     noise_std: float = Field(default=0.0, ge=0.0)
+    snr: Optional[float] = Field(default=None, gt=0.0)
     seed: Optional[int] = None
+    train_ratio: float = Field(default=0.7, gt=0.0, lt=1.0)
 
     model_config = ConfigDict(validate_assignment=True)
 
@@ -64,3 +66,12 @@ class LinearSeparableDataset(BaseModel):
             msg = "features の列数と coefficients の次元が一致していません。"
             raise ValueError(msg)
         return self
+
+
+class LinearSeparableDatasetSplit(BaseModel):
+    """Train/Test 分割済みデータセット。"""
+
+    train: LinearSeparableDataset
+    test: LinearSeparableDataset
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)

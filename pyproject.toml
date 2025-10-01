@@ -12,11 +12,13 @@ dependencies = [
     "polars>=1.33.1",
     "pydantic>=2.11.9",
     "pydantic-settings>=2.11.0",
+    "matplotlib>=3.9.0",
 ]
 
 [dependency-groups]
 dev = [
     "poethepoet>=0.37.0",
+    "pypdf2>=3.0.1",
     "pyright>=1.1.405",
     "pytest>=8.4.2",
     "pytest-asyncio>=0.24.0",
@@ -52,6 +54,10 @@ shell = "ruff format --check . && ruff check --diff . && pyright"
 help = "Run tests"
 env.ENV = "test"
 cmd = "pytest -s -vv --durations=10 --cov=. tests/"
+
+[tool.poe.tasks.run-view]
+help = "Train LS-SVM and visualize classification results"
+cmd = "python src/adapter/scripts/ls_svm_view.py"
 
 [tool.ruff]
 # Exclude a variety of commonly ignored directories.
